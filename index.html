@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Abid Syed - Portfolio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         * {
             margin: 0;
@@ -851,7 +852,7 @@
     <!-- Navigation -->
     <nav>
         <div class="nav-container">
-            <div class="logo">AS</div>
+            <div class="logo">Abid Syed</div>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#about">About</a></li>
@@ -895,7 +896,6 @@
                         <a href="mailto:sd.abid3695@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
                         <a href="https://linkedin.com/in/abid-syed-profile" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
                         <a href="https://github.com/abid-90" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
-                        <a href="tel:7075378866" title="Phone"><i class="fas fa-phone"></i></a>
                     </div>
                 </div>
             </div>
@@ -1065,6 +1065,13 @@
                 <h3>ISS Tracker</h3>
                 <p>Built a web-based application to track the International Space Station in real time with interactive visualization.</p>
             </div>
+            <div class="project-card">
+                <div class="project-icon">
+                    <i class="fas fa-cloud"></i>
+                </div>
+                <h3>Weather Web App</h3>
+                <p>Developed a responsive web application that provides real-time weather updates using live API data.</p>
+            </div>
         </div>
     </section>
 
@@ -1117,6 +1124,15 @@
                     <p>HP LIFE</p>
                 </div>
             </div>
+            <div class="cert-card">
+                <div class="cert-icon">
+                    <i class="fab fa-java"></i>
+                </div>
+                <div>
+                    <h4>Digital Skill Readiness Program (Java Full Stack)</h4>
+                    <p>Wipro TalentNext</p>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1141,15 +1157,6 @@
                     <div>
                         <h4>Location</h4>
                         <p>Repalle, Andhra Pradesh, India</p>
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-icon">
-                        <i class="fas fa-phone"></i>
-                    </div>
-                    <div>
-                        <h4>Phone</h4>
-                        <p>+91 7075378866</p>
                     </div>
                 </div>
             </div>
@@ -1203,6 +1210,75 @@
                 }
             });
         });
+
+        // Contact form functionality
+        const contactForm = document.querySelector('.contact-form');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const messageInput = document.getElementById('message');
+        const submitButton = document.querySelector('.contact-form button');
+
+        // Function to check if all fields are filled
+        function checkFormValidity() {
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const message = messageInput.value.trim();
+
+            if (name && email && message) {
+                submitButton.disabled = false;
+                submitButton.style.opacity = '1';
+                submitButton.style.cursor = 'pointer';
+            } else {
+                submitButton.disabled = true;
+                submitButton.style.opacity = '0.6';
+                submitButton.style.cursor = 'not-allowed';
+            }
+        }
+
+        // Add event listeners to form inputs
+        nameInput.addEventListener('input', checkFormValidity);
+        emailInput.addEventListener('input', checkFormValidity);
+        messageInput.addEventListener('input', checkFormValidity);
+
+        // Handle form submission
+        contactForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const message = messageInput.value.trim();
+
+            submitButton.disabled = true;
+            submitButton.textContent = 'Sending...';
+
+            try {
+                const response = await fetch('/.netlify/functions/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name, email, message }),
+                });
+
+                if (response.ok) {
+                    alert('Thank you for your message! I will get back to you soon.');
+                    contactForm.reset();
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to send message.');
+                }
+            } catch (error) {
+                console.error('Form submission error:', error);
+                alert('Sorry, there was an error sending your message. Please try again or contact me directly at sd.abid3695@gmail.com');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Send Message';
+                checkFormValidity();
+            }
+        });
+
+        // Initialize button state on page load
+        checkFormValidity();
     </script>
 </body>
 </html>
