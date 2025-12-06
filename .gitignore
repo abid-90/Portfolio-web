@@ -19,6 +19,3 @@ Thumbs.db
 
 # Build artifacts
 .vercel/
-
-# Unnecessary files
-pic.jpeg
