@@ -1,23 +1,6 @@
-// This file is kept for backwards compatibility with local development
-// For Vercel deployment, serverless functions in /api directory are used
-
-const express = require('express');
 const nodemailer = require('nodemailer');
-const cors = require('cors');
-const bodyParser = require('body-parser');
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-// Serve static files
-app.use(express.static('.'));
-
-// Create transporter
+// Create transporter for Gmail
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -26,14 +9,27 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Contact form endpoint
-app.post('/api/send-email', async (req, res) => {
-  const { name, email, message } = req.body;
-
-  if (!name || !email || !message) {
-    return res.status(400).json({ error: 'All fields are required' });
+// API handler
+export default async function handler(req, res) {
+  // Only allow POST requests
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const { name, email, message } = req.body;
+
+  // Validate required fields
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: 'All fields (name, email, message) are required' });
+  }
+
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: 'Invalid email address' });
+  }
+
+  // Prepare email options
   const mailOptions = {
     from: process.env.GMAIL_USER,
     to: process.env.GMAIL_USER,
@@ -50,15 +46,18 @@ app.post('/api/send-email', async (req, res) => {
   };
 
   try {
+    // Send email
     await transporter.sendMail(mailOptions);
-    res.json({ success: true, message: 'Email sent successfully' });
+    
+    return res.status(200).json({ 
+      success: true, 
+      message: 'Email sent successfully' 
+    });
   } catch (error) {
     console.error('Error sending email:', error);
-    res.status(500).json({ error: 'Failed to send email' });
+    
+    return res.status(500).json({ 
+      error: 'Failed to send email. Please try again later or contact directly.' 
+    });
   }
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
+}
