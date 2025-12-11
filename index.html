@@ -744,6 +744,12 @@
             min-height: 150px;
         }
 
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
         /* Footer */
         footer {
             background: var(--dark-light);
@@ -889,7 +895,7 @@
             <div class="hero-image">
                 <div class="profile-card">
                     <div class="profile-img">
-                        <img src="https://via.placeholder.com/250x250" alt="Abid Syed">
+                        <img src="pic.jpeg" alt="Abid Syed">
                     </div>
                     <div class="social-links">
                         <a href="mailto:sd.abid3695@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
@@ -1188,7 +1194,7 @@
                     <label for="message">Message</label>
                     <textarea id="message" name="message" required></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">Send Message</button>
+                <button type="submit" class="btn btn-primary" disabled>Send Message</button>
             </form>
         </div>
     </section>
@@ -1228,41 +1234,12 @@
 
         // Contact form functionality
         const contactForm = document.querySelector('.contact-form');
-        const nameInput = document.getElementById('name');
-        const emailInput = document.getElementById('email');
-        const messageInput = document.getElementById('message');
-        const submitButton = document.querySelector('.contact-form button');
-
-        // Function to check if all fields are filled
-        function checkFormValidity() {
-            const name = nameInput.value.trim();
-            const email = emailInput.value.trim();
-            const message = messageInput.value.trim();
-
-            if (name && email && message) {
-                submitButton.disabled = false;
-                submitButton.style.opacity = '1';
-                submitButton.style.cursor = 'pointer';
-            } else {
-                submitButton.disabled = true;
-                submitButton.style.opacity = '0.6';
-                submitButton.style.cursor = 'not-allowed';
-            }
-        }
-
-        // Add event listeners to form inputs
-        nameInput.addEventListener('input', checkFormValidity);
-        emailInput.addEventListener('input', checkFormValidity);
-        messageInput.addEventListener('input', checkFormValidity);
 
         // Handle form submission
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
             alert('this service is temporarily stopped you can contact me using the mail');
         });
-
-        // Initialize button state on page load
-        checkFormValidity();
     </script>
 </body>
 </html>
